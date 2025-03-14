@@ -12,8 +12,10 @@ from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
 from urllib.parse import quote_plus
 from loguru import logger  # Import loguru
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # config locations
 path_to_config = "aivision_config.json"
