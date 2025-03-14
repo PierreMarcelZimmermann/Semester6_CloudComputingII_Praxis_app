@@ -1,6 +1,6 @@
 "use client"; // Mark this file as a client component
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./page.css"; // Import the CSS file for styling
 
 function App() {
@@ -8,6 +8,17 @@ function App() {
     const [caption, setCaption] = useState<string | null>(null);
     const [confidence, setConfidence] = useState<number | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [backendAddress, setBackendAddress] = useState<string | null>(null);
+
+    // Load the react_config.json dynamically
+    useEffect(() => {
+        fetch("/../../react_config.json")  // Der Pfad zur JSON-Datei
+            .then((response) => response.json())
+            .then((data) => {
+                setBackendAddress(data.backend_adress);  // Lädt die backend_adress von der JSON-Datei
+            })
+            .catch((error) => console.error("Error loading configuration:", error));
+    }, []);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files && e.target.files[0]) {
@@ -23,7 +34,11 @@ function App() {
         formData.append("image", imageFile);
 
         try {
-            const response = await fetch("http://localhost:5000/upload_and_analyze", {
+            if (!backendAddress) {
+                throw new Error("Backend address is not available");
+            }
+
+            const response = await fetch(`${backendAddress}/upload_and_analyze`, {
                 method: "POST",
                 body: formData,
             });
@@ -72,7 +87,7 @@ function App() {
                         <h3>AI sees:</h3>
                         <p>{caption}</p>
                         <p id="confidence">(Confidence: {(confidence ? (confidence * 100).toFixed(2) : 0)}%)</p>
-                        </div>
+                    </div>
                 )}
             </div>
         </div>
