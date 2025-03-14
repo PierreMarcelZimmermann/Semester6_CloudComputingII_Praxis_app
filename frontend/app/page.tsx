@@ -15,7 +15,7 @@ function App() {
         fetch("/react_config.json")  // Der Pfad zur JSON-Datei
             .then((response) => response.json())
             .then((data) => {
-                setBackendAddress(data.backend_adress);  // Lädt die backend_adress von der JSON-Datei
+                setBackendAddress(data.backend_address);  // Lädt die backend_adress von der JSON-Datei
             })
             .catch((error) => console.error("Error loading configuration:", error));
     }, []);
