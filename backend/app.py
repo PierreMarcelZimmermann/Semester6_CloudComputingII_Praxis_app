@@ -1,17 +1,16 @@
-# flask 
 from flask import Flask, request, jsonify
-# file 
-import os
 from werkzeug.utils import secure_filename
-# azure 
+import os
+import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import ImageAnalysisResult, Base  # Import the model
+
 from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.core.credentials import AzureKeyCredential
-# misc
-import json
-# db 
-from sqlalchemy import create_engine
 from urllib.parse import quote_plus
+from loguru import logger  # Import loguru
 
 app = Flask(__name__)
 
@@ -23,9 +22,11 @@ path_to_db_config = "db_config.json"
 aivision_endpoint = None
 aivision_key = None
 engine = None
+Session = None
 initialized = False  # Flag to ensure the configuration is loaded only once
 
-from urllib.parse import quote_plus
+# Set up logging with loguru
+logger.add("app.log", rotation="1 week", retention="10 days", compression="zip")
 
 @app.before_request
 def configure_services():
@@ -33,68 +34,60 @@ def configure_services():
     This function is executed before each request. It loads the AI Vision and DB 
     configurations only once, using the `initialized` flag to prevent reloading 
     during subsequent requests.
-
-    The function reads the configuration files for AI Vision and database 
-    connection details, then initializes the global variables for these services.
     """
-    global aivision_endpoint, aivision_key, engine, initialized
+    global aivision_endpoint, aivision_key, engine, Session, initialized
 
     if not initialized:
-        # Load AI Vision configuration
-        with open('aivision_config.json', 'r') as file:
-            config = json.load(file)
-        aivision_endpoint = config["AI_VISION_ENDPOINT"]
-        aivision_key = config["AI_VISION_API_KEY"]
-        
-        # Load Database configuration
-        with open('db_config.json', 'r') as file:
-            config = json.load(file)
-        hostname = config['server']
-        database_name = config['database_name']
-        username = config['username']
-        password = config['password']
-        
-        # URL encode the password
-        encoded_password = quote_plus(password)  # URL encode the password
-        
-        # Ensure that the connection string is properly formed
-        connection_string = f"mysql+mysqlconnector://{username}:{encoded_password}@{hostname}/{database_name}"
-        
-        # Initialize the SQLAlchemy engine
         try:
+            # Load AI Vision configuration
+            with open('aivision_config.json', 'r') as file:
+                config = json.load(file)
+            aivision_endpoint = config["AI_VISION_ENDPOINT"]
+            aivision_key = config["AI_VISION_API_KEY"]
+            
+            # Load Database configuration
+            with open('db_config.json', 'r') as file:
+                config = json.load(file)
+            hostname = config['server']
+            database_name = config['database_name']
+            username = config['username']
+            password = config['password']
+            
+            # URL encode the password
+            encoded_password = quote_plus(password)  # URL encode the password
+            
+            # Ensure that the connection string is properly formed
+            connection_string = f"mysql+mysqlconnector://{username}:{encoded_password}@{hostname}/{database_name}"
+            
+            # Initialize the SQLAlchemy engine
+            logger.info(f"Connecting to database: {hostname}/{database_name}")
             engine = create_engine(connection_string)
+            Session = sessionmaker(bind=engine)  # Create session factory
+            Base.metadata.create_all(engine)  # Create the table if it doesn't exist
+            logger.info("Database connection established successfully.")
         except Exception as e:
-            print(f"Error connecting to the database: {e}")
+            logger.error(f"Error connecting to services: {e}")
             raise
 
         initialized = True  # Mark as initialized to prevent reloading on subsequent requests
 
-
-@app.route("/config", methods=["GET"])
-def config():
-    # Konfigurationsdatei auslesen und Umgebungsvariablen setzen
-    with open(path_to_config, "r") as file:
-        data = json.load(file)
-
-    os.environ["VISION_KEY"] = data.get("AI_VISION_API_KEY", "Not Found")
-    os.environ["VISION_ENDPOINT"] = data.get("AI_VISION_ENDPOINT", "Not Found")
-
-    return jsonify(data)
-
 @app.route("/upload_and_analyze", methods=["POST"])
 def upload_and_analyze():
-    if not aivision_endpoint or aivision_key == "Not Found" or not aivision_key or aivision_key == "Not Found":
+    if not aivision_endpoint or not aivision_key:
+        logger.error("API credentials not set. Call /config first.")
         return jsonify({"error": "API credentials not set. Call /config first."}), 500
 
     # Azure Image Analysis Client erstellen
     client = ImageAnalysisClient(endpoint=aivision_endpoint, credential=AzureKeyCredential(aivision_key))
 
     if "image" not in request.files:
+        logger.error("No image file provided")
         return jsonify({"error": "No image file provided"}), 400
 
     image = request.files["image"]
     
     if image.filename == "":
+        logger.error("No selected file")
         return jsonify({"error": "No selected file"}), 400
 
     filename = secure_filename(image.filename)
@@ -104,12 +97,15 @@ def upload_and_analyze():
 
     # Bildanalyse durchführen
     try:
+        logger.info(f"Starting image analysis for file: {filename}")
         result = client.analyze(
             image_data=image_bytes,
             visual_features=[VisualFeatures.CAPTION, VisualFeatures.READ],
             gender_neutral_caption=True
         )
+        logger.info(f"Image analysis completed for file: {filename}")
     except Exception as e:
+        logger.error(f"Error analyzing image: {e}")
         return jsonify({"error": str(e)}), 500
 
     # Ergebnisse verarbeiten
@@ -129,7 +125,26 @@ def upload_and_analyze():
                     "bounding_box": line.bounding_polygon
                 })
 
+    # Save to the database
+    try:
+        session = Session()  # Create a new session
+        new_result = ImageAnalysisResult(
+            caption_text=response_data["caption"]["text"],
+            caption_confidence=response_data["caption"]["confidence"],
+            read_text=json.dumps(response_data["read_text"])  # Convert read text to a JSON string
+        )
+        session.add(new_result)  # Add to session
+        session.commit()  # Commit transaction
+        session.close()  # Close the session
+        logger.info("Image analysis result saved to the database.")
+    except Exception as e:
+        logger.error(f"Error saving to database: {str(e)}")
+        return jsonify({"error": f"Error saving to database: {str(e)}"}), 500
+
     return jsonify(response_data)
 
+
 if __name__ == "__main__":
+    logger.info("Starting Flask app...")
     app.run(debug=True)
+    logger.info("Flask app stopped.")

@@ -1,0 +1,5 @@
+2025-03-14 11:32:25.398 | INFO     | app:configure_services:63 - Connecting to database: digital-bison-xxyz123.mysql.database.azure.com/exampledb
+2025-03-14 11:32:25.978 | INFO     | app:configure_services:67 - Database connection established successfully.
+2025-03-14 11:32:26.083 | INFO     | app:upload_and_analyze:100 - Starting image analysis for file: obama_image.jpg
+2025-03-14 11:32:27.849 | INFO     | app:upload_and_analyze:106 - Image analysis completed for file: obama_image.jpg
+2025-03-14 11:32:27.939 | INFO     | app:upload_and_analyze:139 - Image analysis result saved to the database.
