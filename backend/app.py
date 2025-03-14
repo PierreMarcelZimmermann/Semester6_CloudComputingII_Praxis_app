@@ -100,7 +100,7 @@ def upload_and_analyze():
         logger.info(f"Starting image analysis for file: {filename}")
         result = client.analyze(
             image_data=image_bytes,
-            visual_features=[VisualFeatures.CAPTION, VisualFeatures.READ],
+            visual_features=[VisualFeatures.CAPTION],
             gender_neutral_caption=True
         )
         logger.info(f"Image analysis completed for file: {filename}")
@@ -108,30 +108,21 @@ def upload_and_analyze():
         logger.error(f"Error analyzing image: {e}")
         return jsonify({"error": str(e)}), 500
 
-    # Ergebnisse verarbeiten
+    # Ergebnisse verarbeiten, ohne read_text
     response_data = {
-        "caption": {
-            "text": result.caption.text if result.caption else None,
-            "confidence": result.caption.confidence if result.caption else None,
-        },
-        "read_text": []
+    "caption": {
+        "text": result.caption.text if result.caption else None,
+        "confidence": float(result.caption.confidence) if result.caption else None,  # Konvertiere zu float
+        }
     }
 
-    if result.read:
-        for block in result.read.blocks:
-            for line in block.lines:
-                response_data["read_text"].append({
-                    "text": line.text,
-                    "bounding_box": line.bounding_polygon
-                })
 
-    # Save to the database
+    # Nur caption_text und caption_confidence in die Datenbank speichern
     try:
         session = Session()  # Create a new session
         new_result = ImageAnalysisResult(
             caption_text=response_data["caption"]["text"],
             caption_confidence=response_data["caption"]["confidence"],
-            read_text=json.dumps(response_data["read_text"])  # Convert read text to a JSON string
         )
         session.add(new_result)  # Add to session
         session.commit()  # Commit transaction
@@ -143,6 +134,27 @@ def upload_and_analyze():
 
     return jsonify(response_data)
 
+
+@app.route("/get_all_entries", methods=["GET"])
+def get_all_entries():
+    try:
+        session = Session()  # Create a new session
+        results = session.query(ImageAnalysisResult).all()  # Retrieve all results from the database
+        session.close()  # Close the session
+
+        # Convert the results into a list of dictionaries
+        entries = []
+        for result in results:
+            entries.append({
+                "id": result.id,
+                "caption_text": result.caption_text,
+                "caption_confidence": result.caption_confidence,
+            })
+        
+        return jsonify(entries)
+    except Exception as e:
+        logger.error(f"Error fetching entries from database: {e}")
+        return jsonify({"error": f"Error fetching entries from database: {e}"}), 500
 
 if __name__ == "__main__":
     logger.info("Starting Flask app...")
