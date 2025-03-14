@@ -22,3 +22,14 @@
 2025-03-14 13:17:23.849 | INFO     | app:upload_and_analyze:100 - Starting image analysis for file: IMG_20220831_135123.jpg
 2025-03-14 13:17:26.383 | INFO     | app:upload_and_analyze:106 - Image analysis completed for file: IMG_20220831_135123.jpg
 2025-03-14 13:17:26.474 | INFO     | app:upload_and_analyze:130 - Image analysis result saved to the database.
+2025-03-14 13:42:31.230 | INFO     | app:configure_services:70 - Connecting to database: digital-bison-xxyz123.mysql.database.azure.com/exampledb
+2025-03-14 13:42:31.933 | INFO     | app:configure_services:74 - Database connection established successfully.
+2025-03-14 13:42:32.463 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: obama_image.jpg
+2025-03-14 13:42:34.436 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: obama_image.jpg
+2025-03-14 13:42:34.514 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 13:42:36.725 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for obama_image.jpg
+2025-03-14 13:42:38.681 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for obama_image.jpg
+2025-03-14 13:43:29.021 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_20220831_135123.jpg
+2025-03-14 13:43:31.412 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_20220831_135123.jpg
+2025-03-14 13:43:31.480 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 13:43:40.289 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg

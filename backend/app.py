@@ -1,3 +1,4 @@
+import hashlib
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
@@ -27,6 +28,12 @@ initialized = False  # Flag to ensure the configuration is loaded only once
 
 # Set up logging with loguru
 logger.add("app.log", rotation="1 week", retention="10 days", compression="zip")
+
+def calculate_image_hash(image_bytes):
+    """
+    Berechnet den SHA-256 Hash des Bildes, um eine eindeutige Identifikation zu ermöglichen.
+    """
+    return hashlib.sha256(image_bytes).hexdigest()
 
 @app.before_request
 def configure_services():
@@ -95,7 +102,30 @@ def upload_and_analyze():
     # Datei als Bytes lesen
     image_bytes = image.read()
 
-    # Bildanalyse durchführen
+    # Berechne den Hash des Bildes
+    image_hash = calculate_image_hash(image_bytes)
+
+    # Überprüfe, ob das Bild bereits analysiert wurde
+    try:
+        session = Session()  # Erstelle eine neue Sitzung
+        existing_result = session.query(ImageAnalysisResult).filter_by(image_hash=image_hash).first()
+        session.close()
+
+        if existing_result:
+            # Wenn das Bild bereits analysiert wurde, Ergebnisse aus der DB zurückgeben
+            logger.info(f"Image already analyzed, returning results for {filename}")
+            response_data = {
+                "caption": {
+                    "text": existing_result.caption_text,
+                    "confidence": existing_result.caption_confidence
+                }
+            }
+            return jsonify(response_data)
+    except Exception as e:
+        logger.error(f"Error checking for existing entry in the database: {e}")
+        return jsonify({"error": "Error checking the database"}), 500
+
+    # Bildanalyse durchführen, falls es noch nicht analysiert wurde
     try:
         logger.info(f"Starting image analysis for file: {filename}")
         result = client.analyze(
@@ -108,32 +138,30 @@ def upload_and_analyze():
         logger.error(f"Error analyzing image: {e}")
         return jsonify({"error": str(e)}), 500
 
-    # Ergebnisse verarbeiten, ohne read_text
     response_data = {
-    "caption": {
-        "text": result.caption.text if result.caption else None,
-        "confidence": float(result.caption.confidence) if result.caption else None,  # Konvertiere zu float
+        "caption": {
+            "text": result.caption.text if result.caption else None,
+            "confidence": float(result.caption.confidence) if result.caption else None
         }
     }
 
-
-    # Nur caption_text und caption_confidence in die Datenbank speichern
+    # Speichern des Ergebnisses in der Datenbank
     try:
-        session = Session()  # Create a new session
+        session = Session()
         new_result = ImageAnalysisResult(
+            image_hash=image_hash,  # Speichern des Hashes des Bildes
             caption_text=response_data["caption"]["text"],
-            caption_confidence=response_data["caption"]["confidence"],
+            caption_confidence=response_data["caption"]["confidence"]
         )
-        session.add(new_result)  # Add to session
-        session.commit()  # Commit transaction
-        session.close()  # Close the session
+        session.add(new_result)
+        session.commit()
+        session.close()
         logger.info("Image analysis result saved to the database.")
     except Exception as e:
         logger.error(f"Error saving to database: {str(e)}")
         return jsonify({"error": f"Error saving to database: {str(e)}"}), 500
 
     return jsonify(response_data)
-
 
 @app.route("/get_all_entries", methods=["GET"])
 def get_all_entries():
