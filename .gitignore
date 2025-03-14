@@ -1,3 +1,5 @@
 __pycache__
 node_modules
 .venv
+# stop config/api key from being committed
+.json 
