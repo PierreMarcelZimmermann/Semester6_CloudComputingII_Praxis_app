@@ -12,7 +12,7 @@ function App() {
 
     // Load the react_config.json dynamically
     useEffect(() => {
-        fetch("/../../react_config.json")  // Der Pfad zur JSON-Datei
+        fetch("/react_config.json")  // Der Pfad zur JSON-Datei
             .then((response) => response.json())
             .then((data) => {
                 setBackendAddress(data.backend_adress);  // Lädt die backend_adress von der JSON-Datei
@@ -38,7 +38,7 @@ function App() {
                 throw new Error("Backend address is not available");
             }
 
-            const response = await fetch(`${backendAddress}/upload_and_analyze`, {
+            const response = await fetch(`http://${backendAddress}:5000/upload_and_analyze`, {
                 method: "POST",
                 body: formData,
             });
