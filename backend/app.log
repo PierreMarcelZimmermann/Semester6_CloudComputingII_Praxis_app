@@ -33,3 +33,37 @@
 2025-03-14 13:43:31.412 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_20220831_135123.jpg
 2025-03-14 13:43:31.480 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
 2025-03-14 13:43:40.289 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
+2025-03-14 14:04:18.785 | INFO     | app:configure_services:70 - Connecting to database: digital-bison-xxyz123.mysql.database.azure.com/exampledb
+2025-03-14 14:04:19.581 | INFO     | app:configure_services:74 - Database connection established successfully.
+2025-03-14 14:04:19.811 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
+2025-03-14 14:04:50.218 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_6260.HEIC
+2025-03-14 14:04:54.747 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_6260.HEIC
+2025-03-14 14:04:54.829 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:05:25.588 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_6259.HEIC
+2025-03-14 14:05:29.537 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_6259.HEIC
+2025-03-14 14:05:29.617 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:05:32.538 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_6259.HEIC
+2025-03-14 14:05:38.179 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_2658.jpg
+2025-03-14 14:05:41.013 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_2658.jpg
+2025-03-14 14:05:41.091 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:05:48.459 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
+2025-03-14 14:06:04.582 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_5131.jpg
+2025-03-14 14:06:06.594 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_5131.jpg
+2025-03-14 14:06:06.730 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:07:35.051 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_6009.jpg
+2025-03-14 14:07:37.553 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_6009.jpg
+2025-03-14 14:07:37.670 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:08:08.611 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_6263.HEIC
+2025-03-14 14:08:13.630 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_6263.HEIC
+2025-03-14 14:08:13.702 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:10:28.143 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_6261.HEIC
+2025-03-14 14:10:32.746 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_6261.HEIC
+2025-03-14 14:10:32.823 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:10:38.576 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_5131.jpg
+2025-03-14 14:11:07.543 | INFO     | app:upload_and_analyze:130 - Starting image analysis for file: IMG_5469.jpg
+2025-03-14 14:11:08.512 | INFO     | app:upload_and_analyze:136 - Image analysis completed for file: IMG_5469.jpg
+2025-03-14 14:11:08.585 | INFO     | app:upload_and_analyze:159 - Image analysis result saved to the database.
+2025-03-14 14:23:17.871 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_6009.jpg
+2025-03-14 14:25:57.532 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
+2025-03-14 14:26:27.053 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
+2025-03-14 14:26:59.869 | INFO     | app:upload_and_analyze:116 - Image already analyzed, returning results for IMG_20220831_135123.jpg
