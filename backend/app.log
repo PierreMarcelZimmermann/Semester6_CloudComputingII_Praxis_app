@@ -6,8 +6,8 @@
 2025-03-14 13:10:07.261 | INFO     | app:configure_services:63 - Connecting to database: digital-bison-xxyz123.mysql.database.azure.com/exampledb
 2025-03-14 13:10:07.813 | INFO     | app:configure_services:67 - Database connection established successfully.
 2025-03-14 13:10:41.027 | INFO     | app:upload_and_analyze:100 - Starting image analysis for file: obama_image.jpg
-2025-03-14 13:10:42.550 | INFO     | app:upload_and_analyze:106 - Image analysis completed for file: obama_image.jpg
-2025-03-14 13:10:42.627 | INFO     | app:upload_and_analyze:129 - Image analysis result saved to the database.
+2025-03-14 13:10:42.550 | DEBUG     | app:upload_and_analyze:106 - Image analysis completed for file: obama_image.jpg
+2025-03-14 13:10:42.627 | ERROR     | app:upload_and_analyze:129 - Image analysis result saved to the database.
 2025-03-14 13:12:16.915 | INFO     | app:upload_and_analyze:100 - Starting image analysis for file: obama_image.jpg
 2025-03-14 13:12:18.549 | INFO     | app:upload_and_analyze:106 - Image analysis completed for file: obama_image.jpg
 2025-03-14 13:12:18.632 | INFO     | app:upload_and_analyze:129 - Image analysis result saved to the database.
