@@ -1,94 +1,99 @@
 /* Basic Layout */
 .App {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: rgba(191, 171, 237, 0.797); /* White background for the entire page */
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
+    display: flex; /* Use flexbox layout for the container */
+    flex-direction: column; /* Arrange items in a column */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    height: 100vh; /* Full height of the viewport */
+    background-color: rgba(191, 171, 237, 0.797); /* Light purple background with some transparency */
+    font-family: 'Arial', sans-serif; /* Use Arial font for text */
+    padding: 20px; /* Add padding around the content */
 }
 
 /* Heading */
 .heading {
-    color: #333;
-    font-size: 2rem;
-    margin-bottom: 20px;
+    color: #333; /* Dark gray text color */
+    font-size: 2rem; /* Set font size for the heading */
+    margin-bottom: 20px; /* Add space below the heading */
 }
 
 /* Panel Style for Interaction */
 .upload-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #f9f9f9; /* Slight gray background for the panel */
-    border-radius: 10px;
-    width: 350px;
-    padding: 30px;
-    text-align: center;
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
-    transition: all 0.3s ease;
+    display: flex; /* Use flexbox layout for the container */
+    flex-direction: column; /* Arrange items in a column */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    background: #f9f9f9; /* Light gray background for the panel */
+    border-radius: 10px; /* Rounded corners for the panel */
+    width: 350px; /* Set a fixed width for the panel */
+    padding: 30px; /* Add padding inside the panel */
+    text-align: center; /* Center the text inside the panel */
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1); /* Add a subtle shadow around the panel */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
 }
 
 /* Hover effect for the panel */
 .upload-container:hover {
-    transform: scale(1.03); /* Subtle scaling effect */
+    transform: scale(1.03); /* Subtle scaling effect when the panel is hovered */
 }
 
 /* Custom File Input */
 .file-input {
-    display: none;
+    display: none; /* Hide the default file input */
 }
 
+/* Style for the label that acts as the file input button */
 .file-label {
-    background-color: blue; /* Green background for the label */
-    color: white;
-    padding: 15px 30px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
+    background-color: blue; /* Blue background for the label */
+    color: white; /* White text color */
+    padding: 15px 30px; /* Add padding around the label */
+    border-radius: 5px; /* Rounded corners for the label */
+    cursor: pointer; /* Change cursor to pointer to indicate interactivity */
+    font-size: 1rem; /* Set the font size */
+    transition: background-color 0.3s; /* Smooth transition for background color */
 }
 
+/* Hover effect for the file input label */
 .file-label:hover {
-    background-color: darkblue; /* Darker green on hover */
+    background-color: darkblue; /* Darker blue background on hover */
 }
 
+/* Label text styling */
 .label-text {
-    display: inline-block;
+    display: inline-block; /* Make the label text an inline block */
 }
 
 /* Image Preview */
 .image-preview {
-    margin-top: 20px;
-    width: 100%;
-    height: 250px;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px; /* Add space above the image preview */
+    width: 100%; /* Make the image container full-width */
+    height: 250px; /* Set a fixed height for the image preview */
+    border-radius: 10px; /* Rounded corners for the image container */
+    overflow: hidden; /* Hide overflowed content */
+    display: flex; /* Use flexbox layout for the image preview */
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow around the image preview */
 }
 
+/* Image inside the preview */
 .image-preview img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    transition: transform 0.3s ease-in-out;
+    max-width: 100%; /* Ensure the image does not exceed the container's width */
+    max-height: 100%; /* Ensure the image does not exceed the container's height */
+    object-fit: contain; /* Maintain the aspect ratio of the image */
+    transition: transform 0.3s ease-in-out; /* Smooth transform transition for image hover */
 }
 
+/* Hover effect for the image */
 .image-preview img:hover {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Slightly scale up the image when hovered */
 }
 
+/* Confidence text styling */
 #confidence {
-    font-size: 0.9em;
-    color: #888; /* Graue Farbe für weniger auffällige Textfarbe */
-    opacity: 0.8; /* Etwas durchsichtiger, um es weniger prominent wirken zu lassen */
-    font-style: italic; /* Kursivschrift für eine weniger dominante Wirkung */
-    margin-top: 5px; /* Ein bisschen Abstand nach oben, um es optisch zu entkoppeln */
-  }
-  
+    font-size: 0.9em; /* Smaller font size for the confidence text */
+    color: #888; /* Light gray color for less prominent text */
+    opacity: 0.8; /* Slightly transparent text */
+    font-style: italic; /* Italicized text for a subtle effect */
+    margin-top: 5px; /* Add a little space above the confidence text */
+}
