@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-import time
 
 # Set the title of the app
 st.title("SkySight Log Dashboard")
@@ -35,6 +34,7 @@ else:
     # Display logs with line number and color-coding based on log level
     log_display = ""
     for line in filtered_logs:
+        # Apply color-coding based on log level
         if "ERROR" in line:
             log_display += f'<p style="color:red;">{line}</p>'
         elif "INFO" in line:
@@ -44,5 +44,5 @@ else:
         else:
             log_display += f'<p>{line}</p>'
 
+    # Display the formatted logs in the Streamlit app
     st.markdown(log_display, unsafe_allow_html=True)
-

@@ -17,7 +17,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# config locations
+# Config file paths
 path_to_config = "aivision_config.json"
 path_to_db_config = "db_config.json"
 
@@ -33,16 +33,21 @@ logger.add("app.log", rotation="1 week", retention="10 days", compression="zip")
 
 def calculate_image_hash(image_bytes):
     """
-    Berechnet den SHA-256 Hash des Bildes, um eine eindeutige Identifikation zu ermöglichen.
+    Calculates the SHA-256 hash of an image to provide a unique identifier.
+    
+    Args:
+        image_bytes (bytes): The image content in bytes.
+        
+    Returns:
+        str: The SHA-256 hash of the image.
     """
     return hashlib.sha256(image_bytes).hexdigest()
 
 @app.before_request
 def configure_services():
     """
-    This function is executed before each request. It loads the AI Vision and DB 
-    configurations only once, using the `initialized` flag to prevent reloading 
-    during subsequent requests.
+    This function is executed before each request. It loads the AI Vision and DB configurations 
+    only once, using the `initialized` flag to prevent reloading during subsequent requests.
     """
     global aivision_endpoint, aivision_key, engine, Session, initialized
 
@@ -65,7 +70,7 @@ def configure_services():
             # URL encode the password
             encoded_password = quote_plus(password)  # URL encode the password
             
-            # Ensure that the connection string is properly formed
+            # Form the connection string
             connection_string = f"mysql+mysqlconnector://{username}:{encoded_password}@{hostname}/{database_name}"
             
             # Initialize the SQLAlchemy engine
@@ -82,11 +87,18 @@ def configure_services():
 
 @app.route("/upload_and_analyze", methods=["POST"])
 def upload_and_analyze():
+    """
+    Endpoint to upload an image and analyze it using Azure's AI Vision service. If the image has been 
+    analyzed before, the result is fetched from the database.
+
+    Returns:
+        Response: JSON object containing the analysis results.
+    """
     if not aivision_endpoint or not aivision_key:
         logger.error("API credentials not set. Call /config first.")
         return jsonify({"error": "API credentials not set. Call /config first."}), 500
 
-    # Azure Image Analysis Client erstellen
+    # Create Azure Image Analysis Client
     client = ImageAnalysisClient(endpoint=aivision_endpoint, credential=AzureKeyCredential(aivision_key))
 
     if "image" not in request.files:
@@ -101,20 +113,20 @@ def upload_and_analyze():
 
     filename = secure_filename(image.filename)
     
-    # Datei als Bytes lesen
+    # Read image as bytes
     image_bytes = image.read()
 
-    # Berechne den Hash des Bildes
+    # Calculate the hash of the image
     image_hash = calculate_image_hash(image_bytes)
 
-    # Überprüfe, ob das Bild bereits analysiert wurde
+    # Check if the image has already been analyzed
     try:
-        session = Session()  # Erstelle eine neue Sitzung
+        session = Session()  # Create a new session
         existing_result = session.query(ImageAnalysisResult).filter_by(image_hash=image_hash).first()
         session.close()
 
         if existing_result:
-            # Wenn das Bild bereits analysiert wurde, Ergebnisse aus der DB zurückgeben
+            # If the image has already been analyzed, return the result from the DB
             logger.info(f"Image already analyzed, returning results for {filename}")
             response_data = {
                 "caption": {
@@ -127,7 +139,7 @@ def upload_and_analyze():
         logger.error(f"Error checking for existing entry in the database: {e}")
         return jsonify({"error": "Error checking the database"}), 500
 
-    # Bildanalyse durchführen, falls es noch nicht analysiert wurde
+    # Perform image analysis if not already analyzed
     try:
         logger.info(f"Starting image analysis for file: {filename}")
         result = client.analyze(
@@ -147,11 +159,11 @@ def upload_and_analyze():
         }
     }
 
-    # Speichern des Ergebnisses in der Datenbank
+    # Save the result in the database
     try:
         session = Session()
         new_result = ImageAnalysisResult(
-            image_hash=image_hash,  # Speichern des Hashes des Bildes
+            image_hash=image_hash,  # Save the image hash
             caption_text=response_data["caption"]["text"],
             caption_confidence=response_data["caption"]["confidence"]
         )
@@ -167,6 +179,12 @@ def upload_and_analyze():
 
 @app.route("/get_all_entries", methods=["GET"])
 def get_all_entries():
+    """
+    Endpoint to retrieve all image analysis results from the database.
+
+    Returns:
+        Response: JSON object containing all image analysis entries.
+    """
     try:
         session = Session()  # Create a new session
         results = session.query(ImageAnalysisResult).all()  # Retrieve all results from the database
