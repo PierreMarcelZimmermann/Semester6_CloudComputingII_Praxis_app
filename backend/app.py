@@ -1,8 +1,7 @@
 import hashlib
+import os
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
-import os
-import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import ImageAnalysisResult, Base  # Import the model
@@ -13,13 +12,13 @@ from azure.core.credentials import AzureKeyCredential
 from urllib.parse import quote_plus
 from loguru import logger  # Import loguru
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
-
-# Config file paths
-path_to_config = "aivision_config.json"
-path_to_db_config = "db_config.json"
 
 # Global variables for AI Vision and DB configurations
 aivision_endpoint = None
@@ -53,19 +52,15 @@ def configure_services():
 
     if not initialized:
         try:
-            # Load AI Vision configuration
-            with open('aivision_config.json', 'r') as file:
-                config = json.load(file)
-            aivision_endpoint = config["AI_VISION_ENDPOINT"]
-            aivision_key = config["AI_VISION_API_KEY"]
+            # Load AI Vision configuration from environment variables
+            aivision_endpoint = os.getenv("AI_VISIONS_ENDPOINT")
+            aivision_key = os.getenv("AI_VISION_API_KEY")
             
-            # Load Database configuration
-            with open('db_config.json', 'r') as file:
-                config = json.load(file)
-            hostname = config['server']
-            database_name = config['database_name']
-            username = config['username']
-            password = config['password']
+            # Load Database configuration from environment variables
+            hostname = os.getenv('DB_SERVER')
+            database_name = os.getenv('DB')
+            username = os.getenv('DB_ADMIN')
+            password = os.getenv('DB_PASSWORD')
             
             # URL encode the password
             encoded_password = quote_plus(password)  # URL encode the password
