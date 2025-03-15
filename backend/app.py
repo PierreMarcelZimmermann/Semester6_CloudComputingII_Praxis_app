@@ -63,7 +63,7 @@ def configure_services():
             password = os.getenv('DB_PASSWORD')
             
             # URL encode the password
-            encoded_password = quote_plus(password)  # URL encode the password
+            encoded_password = quote_plus(password.encode())  # URL encode the password
             
             # Form the connection string
             connection_string = f"mysql+mysqlconnector://{username}:{encoded_password}@{hostname}/{database_name}"
