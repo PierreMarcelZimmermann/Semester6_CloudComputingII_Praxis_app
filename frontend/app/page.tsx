@@ -22,7 +22,7 @@ function App() {
      */
     useEffect(() => {
         // Load the public IP from the environment variable
-        const publicIp = process.env.REACT_APP_VM_PUB_IP; // Load from environment variable
+        const publicIp = process.env.REACT_APP_VM_PUBLIC_IP; // Load from environment variable
         if (publicIp) {
             setPublicIp(publicIp);
         } else {
